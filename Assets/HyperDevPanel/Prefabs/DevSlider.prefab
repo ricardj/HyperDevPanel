@@ -706,3 +706,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0e70a4c0b5168c43a81b50e57f5bf9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sliderTitle: {fileID: 3413382640670616871}
+  sliderValue: {fileID: 3223121016679222185}
+  slider: {fileID: 1338500145545150970}
+  targetReference: {fileID: 0}
+  targetValue: 

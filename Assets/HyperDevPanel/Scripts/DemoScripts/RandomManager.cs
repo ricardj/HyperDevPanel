@@ -2,8 +2,10 @@
 
 public class RandomManager : MonoBehaviour
 {
-    [HideInInspector]
-    public int hellp;
+    [DevPanel]
+    public float someFloat { get; set; }
+    [DevPanel]
+    public bool someBool { get; set; }
 
     [DevPanel]
     public void SayHello()

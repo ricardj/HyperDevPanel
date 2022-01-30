@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DevPanelButton : MonoBehaviour
+public class DevPanelButton : DevPanelGUI
 {
     public Button button;
     public TextMeshProUGUI buttonText;
