@@ -1,61 +1,69 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DevPanelManager : MonoBehaviour
 {
-    public Button buttonPrefab;
+    public DevPanelButton buttonPrefab;
     public GameObject devPanelParent;
 
-    public void Start()
-    {
-        
-    }
-}
+    public List<DevPanelButton> devPanelButtons;
 
-[CustomEditor(typeof(DevPanelManager)]
-public class DevPanelManagerEditor : Editor
-{
-
-}
-
-
-
-
-[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
-public class DevMethodAttribute : PropertyAttribute
-{
-    private string ButtonName;
-    private string FunctionName;
-    private bool Above;
-    private Type ClassType;
-
-    public DevMethodAttribute(string _functionToCall)
+    public void GenerateDevPanelUI()
     {
 
+        ClearDevPanel();
+
+        var typesWithMyAttribute =
+        from t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+        from methods in t.GetMethods()
+        let attributes = methods.GetCustomAttributes(typeof(DevPanelAttribute), true)
+        where attributes != null && attributes.Length > 0
+        select new { Type = t, Attributes = attributes.Cast<DevPanelAttribute>() };
+
+        Debug.Log("So far so good : " + typesWithMyAttribute.Count());
+        Debug.Log("Executing ASsembly: " + System.Reflection.Assembly.GetExecutingAssembly());
+
+
+        foreach (var CurrentType in typesWithMyAttribute)
+        {
+            Debug.Log("Even further");
+
+            List<MonoBehaviour> monobehaviours = FindObjectsOfType<MonoBehaviour>().Where(m => m.GetType() == CurrentType.Type).ToList();
+            for (int i = 0; i < monobehaviours.Count; i++)
+            {
+                MonoBehaviour currentMonoBehaviour = monobehaviours[i];
+                foreach (var customAttribute in CurrentType.Attributes)
+                {
+                    GenerateNewButton(currentMonoBehaviour, customAttribute.GetMethodName(), customAttribute.GetMethodName());
+                }
+            }
+
+        }
+
     }
 
-    public DevMethodAttribute(string _FunctionToCall, System.Type _Type, bool _Above = false)
+    public void ClearDevPanel()
     {
-        ButtonName = "Method: " + _FunctionToCall + "()";
-        FunctionName = _FunctionToCall;
-        Above = _Above;
-        ClassType = _Type;
+        //if (!Application.isPlaying)
+        //{
+        //    foreach (UnityEngine.Object item in devPanelParent.transform)
+        //    {
+        //        DestroyImmediate(((Transform)item).gameObject);
+        //    }
+        //}
+        devPanelButtons.Clear();
     }
-}
 
-
-public class RandomManager : MonoBehaviour
-{
-
-    [DevMethod("SayHello", "RandomManager")]
-    public void SayHello()
+    public void GenerateNewButton(MonoBehaviour monoBehaviour, string buttonName, string methodName)
     {
-        Debug.Log("Hello there");
+        DevPanelButton newDevButton = Instantiate(buttonPrefab, devPanelParent.transform);
+        newDevButton.SetButtonText(buttonName);
+        newDevButton.SetButtonCallback(monoBehaviour,methodName);
+        devPanelButtons.Add(newDevButton);
     }
-
- 
 }
