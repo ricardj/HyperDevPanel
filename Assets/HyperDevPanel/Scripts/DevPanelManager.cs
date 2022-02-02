@@ -34,8 +34,8 @@ public class DevPanelManager : MonoBehaviour
     public void GenerateDevPanelUI()
     {
         ClearDevPanel();
-        GenerateButtonsUsingReflection();
         GenerateSlidersUsingReflection();
+        GenerateButtonsUsingReflection();
     }
 
     private void GenerateButtonsUsingReflection()
