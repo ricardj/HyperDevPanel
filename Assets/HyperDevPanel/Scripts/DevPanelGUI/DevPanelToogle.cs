@@ -16,22 +16,22 @@ public class DevPanelToogle : DevPanelGUI
 
     public void Start()
     {
-        bool sourceValue = (bool)targetReference.GetType().GetProperty(targetValue).GetValue(targetValue, null);
+        bool sourceValue = (bool)targetReference.GetType().GetProperty(targetValue).GetValue(targetReference, null);
         toggle.isOn = sourceValue;
 
 
         toggle.onValueChanged.AddListener(newValue =>
         {
             toggle.isOn = newValue;
-            targetReference.GetType().GetProperty(targetValue).SetValue(newValue, null);
+            targetReference.GetType().GetProperty(targetValue).SetValue(targetReference, newValue);
             //bool currentValue = (bool)targetReference.GetType().GetProperty(targetValue).GetValue(targetValue, null);
 
         });
     }
 
-    internal void SetToogleName(string toggleName)
+    internal void SetToogleName(string text)
     {
-        toogleText.text = toggleName;
+        toogleText.text = Capitalize(text);
     }
 
     internal void SetReferences(MonoBehaviour monoBehaviour, string propertyName)

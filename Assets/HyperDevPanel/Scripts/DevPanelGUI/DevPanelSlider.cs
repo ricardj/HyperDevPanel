@@ -16,21 +16,22 @@ public class DevPanelSlider : DevPanelGUI
 
     public void Start()
     {
-        float sourceValue = (float)targetReference.GetType().GetProperty(targetValue).GetValue(targetValue, null);
+        float sourceValue = (float)targetReference.GetType().GetProperty(targetValue, typeof(float)).GetValue(targetReference, null);
         slider.value = sourceValue;
         UpdateSliderValueText(sourceValue);
 
         slider.onValueChanged.AddListener(newValue =>
         {
-            targetReference.GetType().GetProperty(targetValue).SetValue(newValue, null);
-            float currentValue = (float)targetReference.GetType().GetProperty(targetValue).GetValue(targetValue, null);
+            targetReference.GetType().GetProperty(targetValue).SetValue(targetReference, newValue);
+            float currentValue = (float)targetReference.GetType().GetProperty(targetValue).GetValue(targetReference, null);
             UpdateSliderValueText(currentValue);
         });
     }
 
     public void SetSliderTitle(string text)
     {
-        sliderTitle.text = text;
+        
+        sliderTitle.text = Capitalize(text);
     }
 
     public void SetReferences(MonoBehaviour reference, string targetValue)
@@ -41,6 +42,6 @@ public class DevPanelSlider : DevPanelGUI
 
     public void UpdateSliderValueText(float number)
     {
-        sliderValue.text = number.ToString(".00");
+        sliderValue.text = number.ToString("0.00");
     }
 }

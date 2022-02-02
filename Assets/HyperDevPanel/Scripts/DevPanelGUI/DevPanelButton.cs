@@ -20,10 +20,10 @@ public class DevPanelButton : DevPanelGUI
 
     public void SetButtonText(string text)
     {
-        buttonText.text = text;
+        buttonText.text = Capitalize(text);
     }
 
-    public void SetButtonCallback(MonoBehaviour reference,string methodName)
+    public void SetButtonCallback(MonoBehaviour reference, string methodName)
     {
         this.methodName = methodName;
         targetReference = reference;

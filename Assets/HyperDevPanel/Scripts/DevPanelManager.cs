@@ -15,11 +15,27 @@ public class DevPanelManager : MonoBehaviour
 
     public List<DevPanelGUI> devPanelGUI;
 
+    public Button devPanelActivator;
+
+    public void Start()
+    {
+        devPanelParent.gameObject.SetActive(false);
+        devPanelActivator.onClick.AddListener(ToggleDevPanel);
+    }
+    public void ToggleDevPanel()
+    {
+        devPanelParent.gameObject.SetActive(!devPanelParent.gameObject.activeSelf);
+        if (devPanelParent.gameObject.activeSelf)
+        {
+            GenerateDevPanelUI();
+        }
+    }
+
     public void GenerateDevPanelUI()
     {
         ClearDevPanel();
         GenerateButtonsUsingReflection();
-        //GenerateSlidersUsingReflection();
+        GenerateSlidersUsingReflection();
     }
 
     private void GenerateButtonsUsingReflection()
@@ -27,10 +43,10 @@ public class DevPanelManager : MonoBehaviour
         var typesWithMyAttribute =
                 from t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
                     //group t by t.Name
-                from methods in t.GetMethods()
+                from methods in t.GetMethods().Where(m => !m.IsSpecialName)
                 let attributes = methods.GetCustomAttributes(typeof(DevPanelAttribute), true)
-                where attributes != null && attributes.Length > 0
-                select new { Type = t, Attributes = attributes.Cast<DevPanelAttribute>(), Methods = t.GetMethods() };
+                where attributes != null && attributes.Length > 0 && !methods.IsSpecialName
+                select new { Type = t, Attributes = attributes.Cast<DevPanelAttribute>(), Methods = t.GetMethods().Where(m => !m.IsSpecialName).ToList() };
 
 
         Debug.Log("Method properties: " + typesWithMyAttribute.Count());
@@ -90,12 +106,12 @@ public class DevPanelManager : MonoBehaviour
                     string propertyName = CurrentType.Properties[propertyindex].Name;
                     Debug.Log("That far");
 
-                    if (CurrentType.GetType() == typeof(float))
+                    if (CurrentType.Properties[propertyindex].PropertyType == typeof(float))
                     {
                         Debug.Log("Not that far");
                         GenerateNewSlider(currentMonoBehaviour, propertyName, propertyName);
                     }
-                    if (CurrentType.GetType() == typeof(bool))
+                    if (CurrentType.Properties[propertyindex].PropertyType == typeof(bool))
                     {
                         GenerateNewToggle(currentMonoBehaviour, propertyName, propertyName);
                     }
@@ -110,9 +126,13 @@ public class DevPanelManager : MonoBehaviour
     {
         if (!Application.isPlaying)
         {
-
             for (int i = this.devPanelParent.transform.childCount; i > 0; --i)
                 DestroyImmediate(this.devPanelParent.transform.GetChild(0).gameObject);
+        }
+        else
+        {
+            for (int i = 0; i < this.devPanelParent.transform.childCount; i++)
+                Destroy(this.devPanelParent.transform.GetChild(i).gameObject);
         }
         devPanelGUI.Clear();
     }
