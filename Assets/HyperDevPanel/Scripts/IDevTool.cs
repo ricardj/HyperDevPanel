@@ -1,5 +1,9 @@
-﻿public interface IDevTool
+﻿namespace HyperDevTool
 {
-    public void DrawOptions();
-    public string GetToolName();
+
+    public interface IDevTool
+    {
+        public void DrawOptions();
+        public string GetToolName();
+    }
 }

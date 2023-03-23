@@ -1,14 +1,18 @@
 ﻿using UnityEditor;
 using UnityEngine;
-
-[CreateAssetMenu(menuName ="Hyper Scriptables/New Reset Player Prefs and play")]
-public class ResetPlayerPrefsAndPlaySO : IDevOptionSO
+namespace HyperDevTool
 {
-    public override string DevOptionName => "Reset Player Prefs and Play";
 
-    public override void ExecuteOption()
+    [CreateAssetMenu(menuName = "Hyper Scriptables/New Reset Player Prefs and play")]
+    public class ResetPlayerPrefsAndPlaySO : IDevOptionSO
     {
-        PlayerPrefs.DeleteAll();
-        EditorApplication.EnterPlaymode();
+        public override string DevOptionName => "Reset Player Prefs and Play";
+
+        public override void ExecuteOption()
+        {
+            PlayerPrefs.DeleteAll();
+            EditorApplication.EnterPlaymode();
+        }
     }
+
 }
